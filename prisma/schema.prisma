@@ -1,0 +1,32 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // usa la conexión en pool
+  directUrl = env("POSTGRES_URL_NON_POOLING") // usa una conexión directa
+}
+
+// Modelo para almacenar información de participantes en marketing
+model Participant {
+  id           String       @default(cuid()) @id
+  name         String
+  email        String      @unique
+  level        Int         // Nivel de participante en la jerarquía (1, 2, o 3)
+  createdAt    DateTime    @default(now()) @map(name: "created_at")
+  updatedAt    DateTime    @updatedAt @map(name: "updated_at")
+  transactions Transaction[]
+}
+
+// Modelo para almacenar registros de transacciones de ventas
+model Transaction {
+  id                String      @default(cuid()) @id
+  amount            Float       // Monto de la transacción de venta
+  commissionEarned  Float?      // Comisión ganada en esta transacción
+  createdAt         DateTime    @default(now()) @map(name: "created_at")
+  participant       Participant @relation(fields: [participantId], references: [id])
+  participantId     String
+}
