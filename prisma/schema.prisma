@@ -13,12 +13,21 @@ datasource db {
 // Modelo para almacenar información de participantes en marketing
 model Participant {
   id           String       @default(cuid()) @id
-  name         String
+  name         String      
   email        String      @unique
   level        Int         // Nivel de participante en la jerarquía (1, 2, o 3)
   createdAt    DateTime    @default(now()) @map(name: "created_at")
   updatedAt    DateTime    @updatedAt @map(name: "updated_at")
   transactions Transaction[]
+}
+
+model User {
+  id           String       @default(cuid()) @id
+  name         String      
+  email        String      @unique
+  password     String
+  createdAt    DateTime    @default(now()) @map(name: "created_at")
+  updatedAt    DateTime    @updatedAt @map(name: "updated_at")
 }
 
 // Modelo para almacenar registros de transacciones de ventas
