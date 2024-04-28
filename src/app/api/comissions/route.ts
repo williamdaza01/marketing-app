@@ -15,8 +15,15 @@ export const GET = async () => {
   }
 };
 
-export const calculateCommissions = async (transactions: Transaction[]) => {
+const calculateCommissions = async (transactions: Transaction[]): Promise<{
+  id: string;
+  name: string;
+  level: number;
+  idTransaction: string;
+  commission: number;
+}[]> => {
   const commissions: {
+    id: string;
     name: string;
     level: number;
     idTransaction: string;

@@ -14,23 +14,30 @@ const LoginPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = handleSubmit(async (data) => {
-    const res = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+    try {
+      const res = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-    if (res?.error) setError(res.error);
-    else {
-      router.push('/dashboard')
-      router.refresh()
+      if (res?.error) setError(res.error);
+      else {
+        setError(null);
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (error) {
+      console.log("🚀 ~ onSubmit ~ error:", error);
+      setError("Something went wrong");
     }
-    
   });
   return (
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
       <form onSubmit={onSubmit} className="w-1/4">
-        {error && <p className="bg-red-500 text-xs text-white rounded-lg">{error}</p>}
+        {error && (
+          <p className="bg-red-500 text-xs text-white rounded-lg">{error}</p>
+        )}
         <h1 className="text-slate-200 font-bold text-4xl mb-4">Login</h1>
 
         <label htmlFor="email" className="text-slate-500 mb-2 block text-sm">

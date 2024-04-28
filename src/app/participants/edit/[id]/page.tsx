@@ -29,7 +29,7 @@ const EditPage = ({params: {id}}: {params: {id:string}}) => {
     };
 
     fetchParticipants();
-  }, []);
+  }, [id]);
 
   const onSubmit = handleSubmit(async (data) => {
     const res = await fetch("/api/participants/participant", {
