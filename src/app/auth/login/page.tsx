@@ -15,13 +15,16 @@ const LoginPage = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     const res = await signIn("credentials", {
-      redirect: false,
       email: data.email,
       password: data.password,
+      redirect: false,
     });
 
     if (res?.error) setError(res.error);
-    else router.push("/dashboard");
+    else {
+      router.push('/dashboard')
+      router.refresh()
+    }
     
   });
   return (

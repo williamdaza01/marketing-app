@@ -1,38 +1,42 @@
-import { RequestInternal } from "next-auth";
-import NextAuth from "next-auth/next";
-import CredentialsProvaiders from "next-auth/providers/credentials";
-import prisma from "@/lib/prisma";
-import bcrypt from 'bcrypt'
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import db from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
-const authOptions = {
+export const authOptions = {
   providers: [
-    CredentialsProvaiders({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password", placeholder: "*****" },
       },
-      authorize: async function (
-        credentials: Record<string, string> | undefined,
-        req: Pick<RequestInternal, "body" | "query" | "headers" | "method">
-      ) {
-        const userFound = await prisma.user.findUnique({
-          where: {
-            email: credentials?.email,
-          },
-        });
-
-        if (!userFound) throw new Error("User not found");
-
-        const passwordMatch = await bcrypt.compare(credentials?.password ?? '', userFound.password);
-
-        if(!passwordMatch) throw new Error("Password does not match");
-
-        return {
+      async authorize(credentials, req) {
+        try {
+          const userFound = await db.user.findUnique({
+            where: {
+              email: credentials?.email,
+            },
+          });
+  
+          if (!userFound) throw new Error("No user found");
+  
+          const matchPassword = await bcrypt.compare(
+            credentials?.password ?? "",
+            userFound.password
+          );
+  
+          if (!matchPassword) throw new Error("Wrong password");
+  
+          return {
             id: userFound.id,
-            email: userFound.email,
             name: userFound.name,
-        };
+            email: userFound.email,
+          };
+        } catch (error: any) {
+          throw new Error(error.message);
+        }
+        
       },
     }),
   ],
@@ -41,6 +45,6 @@ const authOptions = {
   },
 };
 
-const authHandler = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
 
-export { authHandler as GET, authHandler as POST };
+export { handler as GET, handler as POST };

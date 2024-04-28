@@ -34,7 +34,6 @@ model User {
 model Transaction {
   id                String      @default(cuid()) @id
   amount            Float       // Monto de la transacción de venta
-  commissionEarned  Float?      // Comisión ganada en esta transacción
   createdAt         DateTime    @default(now()) @map(name: "created_at")
   participant       Participant @relation(fields: [participantId], references: [id])
   participantId     String
