@@ -28,7 +28,6 @@ const LoginPage = () => {
         router.refresh();
       }
     } catch (error) {
-      console.log("🚀 ~ onSubmit ~ error:", error);
       setError("Something went wrong");
     }
   });
